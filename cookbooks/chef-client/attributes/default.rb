@@ -50,7 +50,7 @@ default['chef_client']['log_perm'] = '640'
 # Configuration for chef-client::cron recipe.
 default['chef_client']['cron'] = {
   'minute' => '0',
-  'hour' => '0,4,8,12,16,20',
+  'hour' => '*',
   'weekday' => '*',
   'path' => nil,
   'environment_variables' => nil,
