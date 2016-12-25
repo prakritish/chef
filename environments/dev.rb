@@ -6,3 +6,8 @@ override_attributes({
         "name" => "Administrator"
     }
 })
+default_attributes({
+    "author" => {
+        "name" => "P Sen Eshore"
+    }
+})
