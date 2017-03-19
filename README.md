@@ -14,18 +14,91 @@ Also located inside the .chef directory are .pem files, which contain private ke
 
 More information about knife.rb configuration options can be found in [the documentation for knife](https://docs.chef.io/config_rb_knife.html).
 
-Cookbooks
----------
-A cookbook is the fundamental unit of configuration and policy distribution. A sample cookbook can be found in `cookbooks/starter`. After making changes to any cookbook, you must upload it to the Chef server using knife:
+Cheatsheet
+===========
+### Bootstrap a node
+    knife bootstrap <FQDN> -N <node name or alias> --ssh-user <user name> --sudo
+e.g.,
+    knife bootstrap prakritish3.mylabserver.com -N minion2 --ssh-user user --sudo
 
-    $ knife upload cookbooks/starter
+### List nodes
+    knife node list
 
-For more information about cookbooks, see the example files in the `starter` cookbook.
+### View node information
+    knife node show <node name>
+e.g.,
+    [root@prakritish1 chef]# knife node show minion2
+    Node Name:   minion2
+    Environment: _default
+    FQDN:        prakritish3.mylabserver.com
+    IP:          52.221.231.22
+    Run List:
+    Roles:
+    Recipes:
+    Platform:    centos 7.3.1611
+    Tags:
+    [root@prakritish1 chef]#
 
-Roles
------
-Roles provide logical grouping of cookbooks and other roles. A sample role can be found at `roles/starter.rb`.
+### Create a cookbook
+    chef generate cookbook <path of cookbook>
+e.g.,
+```
+[root@prakritish1 chef]# chef generate cookbook cookbooks/my_cook_book
+Generating cookbook my_cook_book
+- Ensuring correct cookbook file content
+- Ensuring delivery configuration
+- Ensuring correct delivery build cookbook content
 
-Getting Started
--------------------------
-Now that you have the chef-repo ready to go, check out [Learn Chef](https://learn.chef.io/) to proceed with your workstation setup. If you have any questions about Chef you can always ask [our support team](https://www.chef.io/support/) for a helping hand.
+Your cookbook is ready. Type `cd cookbooks/my_cook_book` to enter it.
+
+There are several commands you can run to get started locally developing and testing your cookbook.
+Type `delivery local --help` to see a full list.
+
+Why not start by writing a test? Tests for the default recipe are stored at:
+
+test/smoke/default/default_test.rb
+
+If you'd prefer to dive right in, the default recipe can be found at:
+
+recipes/default.rb
+
+[root@prakritish1 chef]# ls -l cookbooks/my_cook_book/
+total 16
+-rw-r--r--. 1 root root   47 Mar 19 22:36 Berksfile
+-rw-r--r--. 1 root root 1133 Mar 19 22:36 chefignore
+-rw-r--r--. 1 root root  775 Mar 19 22:36 metadata.rb
+-rw-r--r--. 1 root root   60 Mar 19 22:36 README.md
+drwxr-xr-x. 2 root root   23 Mar 19 22:36 recipes
+drwxr-xr-x. 3 root root   38 Mar 19 22:36 spec
+drwxr-xr-x. 3 root root   18 Mar 19 22:36 test
+[root@prakritish1 chef]#
+```
+
+### Generate a recipe
+    chef generate recipe <path to cookbook> <recipe name>
+e.g.,
+```
+[root@prakritish1 chef]# chef generate recipe cookbooks/my_cook_book my_recipe
+Recipe: code_generator::recipe
+  * directory[cookbooks/my_cook_book/spec/unit/recipes] action create (up to date)
+  * cookbook_file[cookbooks/my_cook_book/spec/spec_helper.rb] action create_if_missing (up to date)
+  * template[cookbooks/my_cook_book/spec/unit/recipes/my_recipe_spec.rb] action create_if_missing
+    - create new file cookbooks/my_cook_book/spec/unit/recipes/my_recipe_spec.rb
+    - update content in file cookbooks/my_cook_book/spec/unit/recipes/my_recipe_spec.rb from none to b7f068
+    (diff output suppressed by config)
+    - restore selinux security context
+  * directory[cookbooks/my_cook_book/test/smoke/default] action create (up to date)
+  * template[cookbooks/my_cook_book/test/smoke/default/my_recipe.rb] action create_if_missing
+    - create new file cookbooks/my_cook_book/test/smoke/default/my_recipe.rb
+    - update content in file cookbooks/my_cook_book/test/smoke/default/my_recipe.rb from none to 3ddb39
+    (diff output suppressed by config)
+    - restore selinux security context
+  * template[cookbooks/my_cook_book/recipes/my_recipe.rb] action create
+    - create new file cookbooks/my_cook_book/recipes/my_recipe.rb
+    - update content in file cookbooks/my_cook_book/recipes/my_recipe.rb from none to d23697
+    (diff output suppressed by config)
+    - restore selinux security context
+[root@prakritish1 chef]# ls -l cookbooks/my_cook_book/recipes/my_recipe.rb
+-rw-r--r--. 1 root root 105 Mar 19 22:40 cookbooks/my_cook_book/recipes/my_recipe.rb
+[root@prakritish1 chef]#
+```
